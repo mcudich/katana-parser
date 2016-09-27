@@ -3911,7 +3911,7 @@ yyreduce:
 
   case 275:
 
-    { (yyval.value) = (yyvsp[0].value); (yyval.value)->fValue *= (yyvsp[-1].integer); }
+    { (yyval.value) = (yyvsp[0].value); (yyval.value)->value.fValue *= (yyvsp[-1].integer); }
 
     break;
 

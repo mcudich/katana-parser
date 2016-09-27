@@ -78,7 +78,7 @@ typedef enum {
     KatanaSelectorRelationShadowPseudo,     // Special case of shadow DOM pseudo elements / shadow pseudo element
     KatanaSelectorRelationShadowDeep        // /shadow-deep/ combinator
 } KatanaSelectorRelation;
-    
+
 typedef enum {
     KatanaPseudoNotParsed,
     KatanaPseudoUnknown,
@@ -208,31 +208,31 @@ typedef enum {
     KATANA_VALUE_DPCM = 32,
     KATANA_VALUE_FR = 33,
     KATANA_VALUE_UNICODE_RANGE = 102,
-    
+
     KATANA_VALUE_PARSER_OPERATOR = 103,
     KATANA_VALUE_PARSER_INTEGER = 104,
     KATANA_VALUE_PARSER_HEXCOLOR = 105,
     KATANA_VALUE_PARSER_FUNCTION = 0x100001,
     KATANA_VALUE_PARSER_LIST     = 0x100002,
     KATANA_VALUE_PARSER_Q_EMS    = 0x100003,
-    
+
     KATANA_VALUE_PARSER_IDENTIFIER = 106,
-    
+
     KATANA_VALUE_TURN = 107,
     KATANA_VALUE_REMS = 108,
     KATANA_VALUE_CHS = 109,
-    
+
     KATANA_VALUE_COUNTER_NAME = 110,
-    
+
     KATANA_VALUE_SHAPE = 111,
-    
+
     KATANA_VALUE_QUAD = 112,
-    
+
     KATANA_VALUE_CALC = 113,
     KATANA_VALUE_CALC_PERCENTAGE_WITH_NUMBER = 114,
     KATANA_VALUE_CALC_PERCENTAGE_WITH_LENGTH = 115,
     KATANA_VALUE_VARIABLE_NAME = 116,
-    
+
     KATANA_VALUE_PROPERTY_ID = 117,
     KATANA_VALUE_VALUE_ID = 118
 } KatanaValueUnit;
@@ -282,7 +282,7 @@ typedef struct {
     const char* name;
     KatanaRuleType type;
 } KatanaRule;
-    
+
 typedef struct {
     KatanaRule base;
     KatanaArray* /* KatanaSelector */ selectors;
@@ -336,7 +336,7 @@ typedef struct {
     const char* name;
     KatanaArray* /* KatanaKeyframe */ keyframes;
 } KatanaKeyframesRule;
-    
+
 typedef struct {
     KatanaArray* /* KatanaValue: `percentage`, `from`, `to` */ selectors;
     KatanaArray* /* KatanaDeclaration */ declarations;
@@ -399,13 +399,13 @@ typedef struct KatanaSelector {
     KatanaSelectorRareData* data;
     struct KatanaSelector* tagHistory;
 } KatanaSelector;
-    
+
 unsigned katana_calc_specificity_for_selector(KatanaSelector* selector);
 
 typedef struct {
 	// property name
     const char* property;
-	
+
 	// property value
     KatanaArray* /* KatanaValue */ values;
     const char* string;
@@ -431,7 +431,7 @@ typedef struct KatanaValue {
         const char* string;
         KatanaValueFunction* function;
         KatanaArray* list;
-    };
+    } value;
     KatanaValueUnit unit;
     const char* raw;
 } KatanaValue;
@@ -446,7 +446,7 @@ typedef struct {
      */
     const char* encoding;
 } KatanaCharsetRule;
-    
+
 typedef struct {
     int code;
     const char* message;
@@ -480,7 +480,7 @@ typedef enum KatanaParserMode {
 	// Inline stylesheet like "width: 20px; height: 20px;"
     KatanaParserModeDeclarationList,
 } KatanaParserMode;
-    
+
 typedef struct KatanaInternalOutput {
     // Complete CSS string
     KatanaStylesheet* stylesheet;

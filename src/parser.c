@@ -577,18 +577,18 @@ void katana_destroy_value(KatanaParser* parser, KatanaValue* e)
         case KATANA_VALUE_UNICODE_RANGE:
         case KATANA_VALUE_PARSER_HEXCOLOR:
         {
-            katana_parser_deallocate(parser, (void*) e->string);
+            katana_parser_deallocate(parser, (void*) e->value.string);
         }
             break;
         case KATANA_VALUE_PARSER_LIST:
         {
-            katana_destroy_array(parser, katana_destroy_value, e->list);
-            katana_parser_deallocate(parser, (void*) e->list);
+            katana_destroy_array(parser, katana_destroy_value, e->value.list);
+            katana_parser_deallocate(parser, (void*) e->value.list);
         }
             break;
         case KATANA_VALUE_PARSER_FUNCTION:
         {
-            katana_destroy_function(parser, e->function);
+            katana_destroy_function(parser, e->value.function);
         }
             break;
         case KATANA_VALUE_NUMBER:
@@ -650,7 +650,7 @@ KatanaValue* katana_new_number_value(KatanaParser* parser, int sign, KatanaParse
     KatanaValue* v = katana_new_value(parser);
     v->id = KatanaValueInvalid;
     v->isInt = false;
-    v->fValue = sign * value->val;
+    v->value.fValue = sign * value->val;
     v->unit = unit;
     if ( 1 == sign ) {
         v->raw = katana_string_to_characters(parser, &value->raw);
@@ -665,7 +665,7 @@ KatanaValue* katana_new_dimension_value(KatanaParser* parser, KatanaParserNumber
     KatanaValue* v = katana_new_value(parser);
     v->id = KatanaValueInvalid;
     v->isInt = false;
-    v->fValue = value->val;
+    v->value.fValue = value->val;
     v->raw = katana_string_to_characters(parser, &value->raw);
     v->unit = unit;
     return v;
@@ -677,7 +677,7 @@ KatanaValue* katana_new_operator_value(KatanaParser* parser, int value)
     v->id = KatanaValueInvalid;
     v->isInt = false;
     v->unit = KATANA_VALUE_PARSER_OPERATOR;
-    v->iValue = value;
+    v->value.iValue = value;
     return v;
 }
 
@@ -689,7 +689,7 @@ KatanaValue* katana_new_ident_value(KatanaParser* parser, KatanaParserString* va
     v->id = KatanaValueCustom;
     v->isInt = false;
     v->unit = KATANA_VALUE_IDENT;
-    v->string = katana_string_to_characters(parser, value);
+    v->value.string = katana_string_to_characters(parser, value);
     return v;
 }
 
@@ -698,7 +698,7 @@ KatanaValue* katana_new_function_value(KatanaParser* parser, KatanaParserString*
     KatanaValueFunction* func = katana_new_function(parser, name, args);
     KatanaValue* value = katana_new_value(parser);
     value->unit = KATANA_VALUE_PARSER_FUNCTION;
-    value->function = func;
+    value->value.function = func;
     return value;
 }
 
@@ -706,18 +706,18 @@ KatanaValue* katana_new_list_value(KatanaParser* parser, KatanaArray* list)
 {
     KatanaValue* value = katana_new_value(parser);
     value->unit = KATANA_VALUE_PARSER_LIST;
-    value->list = list;
+    value->value.list = list;
     return value;
 }
 
 void katana_value_set_string(KatanaParser* parser, KatanaValue* value, KatanaParserString* string)
 {
-    value->string = katana_string_to_characters(parser, string);
+    value->value.string = katana_string_to_characters(parser, string);
 }
 
 void katana_value_set_sign(KatanaParser* parser, KatanaValue* value, int sign)
 {
-    value->fValue *= sign;
+    value->value.fValue *= sign;
     
     if ( sign < 0 ) {
         const char* raw = value->raw;
@@ -1668,35 +1668,35 @@ static const char* katana_stringify_value(KatanaParser* parser, KatanaValue* val
             snprintf(str, sizeof(str), "%s", value->raw);
             break;
         case KATANA_VALUE_IDENT:
-            snprintf(str, sizeof(str), "%s", value->string);
+            snprintf(str, sizeof(str), "%s", value->value.string);
             break;
         case KATANA_VALUE_STRING:
             // FIXME: @(QFish) Do we need double quote or not ?
 //            snprintf(str, sizeof(str), "\"%s\"", value->string);
-            snprintf(str, sizeof(str), "%s", value->string);
+            snprintf(str, sizeof(str), "%s", value->value.string);
             break;
         case KATANA_VALUE_PARSER_FUNCTION:
         {
-            const char* args_str = katana_stringify_value_list(parser, value->function->args);
-            snprintf(str, sizeof(str), "%s%s)", value->function->name, args_str);
+            const char* args_str = katana_stringify_value_list(parser, value->value.function->args);
+            snprintf(str, sizeof(str), "%s%s)", value->value.function->name, args_str);
             katana_parser_deallocate(parser, (void*) args_str);
             break;
         }
         case KATANA_VALUE_PARSER_OPERATOR:
-            if (value->iValue != '=') {
-                snprintf(str, sizeof(str), " %c ", value->iValue);
+            if (value->value.iValue != '=') {
+                snprintf(str, sizeof(str), " %c ", value->value.iValue);
             } else {
-                snprintf(str, sizeof(str), " %c", value->iValue);
+                snprintf(str, sizeof(str), " %c", value->value.iValue);
             }
             break;
         case KATANA_VALUE_PARSER_LIST:
-            return katana_stringify_value_list(parser, value->list);
+            return katana_stringify_value_list(parser, value->value.list);
             break;
         case KATANA_VALUE_PARSER_HEXCOLOR:
-            snprintf(str, sizeof(str), "#%s", value->string);
+            snprintf(str, sizeof(str), "#%s", value->value.string);
             break;
         case KATANA_VALUE_URI:
-            snprintf(str, sizeof(str), "url(%s)", value->string);
+            snprintf(str, sizeof(str), "url(%s)", value->value.string);
             break;
         default:
             katana_print("KATANA: Unknown Value unit.");
